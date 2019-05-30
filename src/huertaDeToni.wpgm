@@ -20,7 +20,8 @@ program huertaDeToni {
 	game.addVisualIn(pachamama, game.at(0, 13));
 	
 	/* 
-	 * Agregamos una fila de maices.
+	 * Agregamos una fila de maices. Ojo al regar, que Toni no va a conocer
+	 * estas plantas.
 	 * 
 	 * En este ejemplo también usamos addVisualIn, por lo tanto
 	 * el Maiz solo define la imagen.
