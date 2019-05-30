@@ -1,85 +1,96 @@
 # La huerta de Toni - Game
 
-## Etapa 1 - Modelo básico
+## Etapa 1 - caminar, sembrar, regar y vender
 
 ### Intro
 Toni es un [amigo youtuber](https://www.youtube.com/channel/UC8nVWi8L7fPCjOMpSSNAM0Q) que se gana la vida cultivando plantas de distintas especies.
 Para ello tiene que sembrar, regar y cosechar sus cultivos. Después de la cosecha, Toni vende lo que cultivó, obteniendo ganancias en la forma de monedas de oro.
 Toni es muy ahorrativo y todo el oro que obtiene por sus cosechas lo acumula.
 
-Nuestro objetivo es construir un juego en el que podamos controlar a Toni, utilizando el teclado para moverlo alrededor del tablero. Pero en esta primera parte vamos a concentrarnos solamente en programar las clases y objetos necesarios para modelar su comportamiento; agregaremos las cosas de _game_ en una segunda etapa.
+Nuestro objetivo es construir un juego en el que podamos controlar a Toni, utilizando el teclado para moverlo alrededor del tablero. Las plantas y el comportamiento de Toni son los que ya agregamos en la primera etapa, aquí agregaremos algunas cosas para convertirlo en un juego.
 
-En este juego consideramos tres especies: _maíz_, _trigo_ y _tomaco_.
+Antes de empezar, copiá las definiciones de Toni, las plantas y la Pachamama en los archivos que dejamos ya preparados para ello.
 
-### Sembrar
-El acto de sembrar crea una nueva planta, con estas características:  
+### Caminar y sembrar
 
-| Planta | Situación al ser sembrada |
-|---|---|
-| **Maíz**   | Es una planta bebé. |
-| **Trigo**  | Está en etapa de evolución 0. |
-| **Tomaco** | Es una planta hecha y derecha. |
+Configurar las siguientes teclas para controlar a Toni:
 
-Cada vez que se siembra una planta, Toni la agrega a una colección de `plantasSembradas`.
+|Tecla|Acción esperada|
+|-----|---------------|
+|Flechas|Desplazan a Toni en la dirección correspondiente.|
+|M|Siembra una planta de maíz en la posición actual.|
+|T|Siembra una planta de trigo en la posición actual.|
+|O|Siembra una planta de tomaco en la posición actual.|
+
+Por ahora, vamos a evitar sembrar dos plantas en la misma celda, porque eso va a traer problemas a futuro. Más adelante vamos a agregar una validación para que Toni tire error. Es importante que Toni recuerde las plantas que sembró, lo vamos a necesitar para regar.
+
+Al ser sembradas, las plantas aparecen en su estado inicial, según ya vimos en la etapa 1.
 
 ### Regar
-Una vez sembrado un cultivo, para que crezca debe ser regado.
+Vamos a contemplar dos formas de regar:
 
-Agregar a Toni un método `regarLasPlantas()` que riegue cada una de las plantas que hay sembradas.
-Cada planta reacciona diferente cuando es regada:
+|Tecla|Acción esperada|
+|-----|---------------|
+|A|Riega todas las plantas que hay en el tablero.|
+|R|Riega la planta sobre la cual está parado Toni.|
 
-| Planta | Efecto al ser regada |
-|---|---|
-| **Maíz**   | Si es bebé, pasa a adulta. Si ya es adulta, no pasa nada. |
-| **Trigo**  | Pasa a la etapa de evolución siguiente: de 0 a 1, de 1 a 2, de 2 a 3, de 3 vuelve a 0. |
-| **Tomaco** | Ninguno. |
+El regar todas ya lo teníamos programado de la etapa anterior, no debería ser problemático. Regar una sola es más difícil: primero hay que averiguar qué plantas hay en la posición actual de Toni y luego regarlas.
+
+Para esto, Wollok Game tiene un método llamado `colliders(visual)`, que devuelve **todos** los elementos que están chocando con el objeto que va por parámetro. Veamos dos ejemplos:
+
+|Situación|Resultado de evaluar `game.colliders(toni)`
+|--------|---------|
+|![](./ejemplos/toni-solito.jpg)|`[]`|
+|![](./ejemplos/toni-con-maiz.jpg)|`[un/a Maiz]`|
+
+Como se ve, lo que devuelve es una lista y lo que necesitamos es una sola planta, para poder regarla. Les queda a ustedes pensar cómo resolver eso.
+
+El efecto de las plantas al ser regadas es el mismo de antes. Obviamente, tiene que actualizarse la imagen cada vez que se riega, en la carpeta `assets` ya tienen todo lo necesario.
 
 ### Cosechar
-Una planta, puede o no estar lista para la cosecha. El _maíz_ está listo para la cosecha si es adulto, el _trigo_ si está en nivel de evolución 2 o más, el _tomaco_ siempre.
+Nuevamente, vamos a contemplar dos formas de cosechar:
 
-Si la planta está lista para la cosecha, se la cosecha, para luego poder venderla. Toni debe recordar qué plantas tiene para vender. El acto de cosechar una planta implica que ya no está sembrada (y por lo tanto debe reflejarse en la colección).
+|Tecla|Acción esperada|
+|-----|---------------|
+|X|Cosecha todas las plantas que están **listas para cosechar**.|
+|C|Cosecha la planta sobre la cual está parado Toni.|
 
-Agregar a Toni los siguientes métodos:
-* `plantasListasParaCosechar()`: el conjunto de las plantas sembradas que ya se pueden cosechar;
-* `cosecharTodo()`: que cosecha _solamente_ las plantas que sembró y que ya están listas. Conviene acá hacer un método que resuelva la cosecha para una planta y luego utilizarlo para desarrollar `cosecharTodo()`;
+En el caso de la cosecha por planta, por ahora vamos a ignorar si está lista o no.
 
-### Venta
-Implementar un método `venderCosecha()` que vende todas las plantas que ya fueron previamente cosechadas. Al hacerlo, obtiene el oro por cada planta que tiene, de acuerdo a esta especificación:
-- **Maíz**: 150 monedas por planta.
-- **Trigo**: 100 monedas si está en etapa 2, 200 si está en etapa 3.
-- **Tomaco**: 80 monedas por planta.
+### Vender
+Programar las siguientes teclas:
 
-Toni debe acumular el oro y recordar cuánto oro obtuvo en total. De nuevo, la recomendación es hacer primero un método que venda **una** planta y luego hacer el que vende todas.
+|Tecla|Acción esperada|
+|-----|---------------|
+|V|Vende toda la cosecha actual.|
+|Espacio|Informa el estado de Toni.|
 
-**Atenti**  
-Una vez que vende lo que tiene para vender, obviamente, deja de tenerlo.
+Para el informe del estado de Toni vamos a armar un String y mostrarlo con `game.say`. El mensajito debería decir cuántas monedas tiene actualmente y cuántas plantas le quedan para vender, por ejemplo: `"Tengo 80 monedas y me quedan 3 plantas para vender"`.
 
-## Etapa 2 - consultas
+Recordá que se pueden concatenar Strings utilizando el `+`:
 
-A partir de lo implementado en la etapa anterior, queremos agregar las siguientes consultas a Toni:
+```
+>>> "Me quedan " + 3 + " plantas"
+"Me quedan 3 plantas"
+```
 
-* `paraCuantosDiasLeAlcanza():` asumiendo que tiene un gasto de 200 monedas por día, indica para cuántos días le alcanza el dinero. Considerar para esta cuenta el dinero acumulado **más** lo que podría sacar si vende su cosecha actual;
-* `cuantoHayParaCeliacos():` indica cuántas plantas de las sembradas podrían ser consumidas por personas con celiaquía, las cuales solo pueden comer alimentos sin gluten (el trigo tiene gluten, el tomaco y el maíz no). Considerar solamente las plantas que estén listas para cosechar;
-* `convieneRegar():` indica si alguna de las plantas sembradas aún no está lista para la cosecha - porque en ese caso convendría regar para acelerar el proceso.
+## Etapa 2 - la Pachamama
 
-## Etapa 3 - la Pachamama
+Vamos a simplificar aún más el manejo de la Pachamama, agregando solamente teclas para las acciones de fumigar y llover:
 
-Agregar al modelo un objeto que represente a la Pachamama, el cual (obviamente) provocará distintos cambios sobre nuestros cultivos.
+|Tecla|Acción esperada|
+|-----|---------------|
+|F|Provoca el cambio correspondiente a `fumigar` en la Pachamama.|
+|L|Provoca el cambio correspondiente a `llover` en la Pachamama.|
 
-En una sobresimplificación, vamos a decir que la Pacha tiene un nivel de agradecimiento, que arranca en 10 y que se puede modificar según las siguientes conductas del ser humano y la naturaleza:
+Se pide además que cambie la imagen de la Pachamama cuando no está agradecida. La imagen para hacerlo no está incluida, tienen que armarla ustedes.
 
-* `llover()`: aumenta en 5 el nivel de agradecimiento;
-* `tirarBasura()`: disminuye en 10 el nivel de agradecimiento;
-* `fumigar()`: lleva el nivel de agradecimiento a 0, sin importar en cuánto estaba;
-* `abonar()`: duplica el nivel de agradecimiento - si estaba en 5 queda en 10, si estaba en 2 queda en 4, etc.
+Debería cambiar también la imagen de los tomacos, para reflejar si están podridos o no. Estas imágenes sí se incluyen.
 
-Agregarle también un método `estaAgradecida()` que nos indica si su nivel de agradecimiento es de 10 o más.
+## Etapa 3 - validaciones
 
-Cuando está agradecida, cada planta reacciona de distinta manera:
-* el _maíz_ crece más alto, y su valor en el mercado es de 180 por planta;
-* el _trigo_ crece más rápido, por lo tanto su nivel aumenta en 2 cada vez que se lo riega;
-* el _tomaco_ se pudre porque es un injerto artificial y por lo tanto ya no estará listo para la cosecha.
+Agregar las siguientes validaciones:
 
-Cuando no está agradecida, las plantas mantienen el comportamiento de la etapa 1.
-
-Hacer las modificaciones que hagan falta en las plantas para que se comporten de esa manera. Tener en cuenta que habrá un solo objeto que represente a la `pachamama`, y que el código de las plantas deberá modificarse automáticamente según su estado de agradecimiento.
+1. Al sembrar, arrojar error si ya había otra planta en la celda actual.
+1. Al cosechar, arrojar error si la planta de la celda actual no está lista.
+1. Al cosechar, arrojar error si no hay ninguna planta en la celda actual.
