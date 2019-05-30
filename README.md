@@ -1,4 +1,4 @@
-# La huerta de Toni
+# La huerta de Toni - Game
 
 ## Etapa 1 - Modelo básico
 

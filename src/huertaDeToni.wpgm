@@ -1,0 +1,28 @@
+import wollok.game.*
+import toni.*
+import plantas.*
+
+program huertaDeToni {
+	game.width(15)
+	game.height(15)
+	
+	// Configuramos una imagen de fondo, que se repite para cada celda del tablero.
+	game.ground("tierra.png")
+	
+	// Agregamos al amigo Toni.
+	game.addVisual(toni)
+	
+	/* 
+	 * Agregamos una fila de maices.
+	 * 
+	 * Acá usamos addVisualIn en vez de addVisual, y por esto 
+	 * no es necesario que el objeto conozca su position.
+	 * En este ejemplo, Maiz solo define la imagen.
+	 * 
+	 * De yapa, mostramos cómo agregar varios objetos de una utilizando
+	 * un rango (1..13), que equivale a la lista [1, 2, 3, ..., 13].
+	 */
+	(1..13).forEach { x => game.addVisualIn(new Maiz(), game.at(x, 5)) }
+		
+	game.start()
+}
