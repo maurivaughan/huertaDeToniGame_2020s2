@@ -61,7 +61,7 @@ Toni debe acumular el oro y recordar cuánto oro obtuvo en total. De nuevo, la r
 **Atenti**  
 Una vez que vende lo que tiene para vender, obviamente, deja de tenerlo.
 
-###Consultas a Toni
+### Consultas a Toni
 
 ,Queremos agregar las siguientes consultas a Toni:
 
