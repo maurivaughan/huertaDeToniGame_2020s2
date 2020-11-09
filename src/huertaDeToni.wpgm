@@ -2,34 +2,68 @@ import wollok.game.*
 import toni.*
 import plantas.*
 import pachamama.*
+import plantas.*
+
+
 
 program huertaDeToni {
+	
+	game.title("LA HUERTA DE TONI")
 	game.width(15)
 	game.height(15)
 	
-	// Configuramos una imagen de fondo, que se repite para cada celda del tablero.
+
 	game.ground("tierra.png")
 	
-	// Agregamos al amigo Toni.
 	game.addVisual(toni)
-	
-	/*
-	 * Acá usamos addVisualIn en vez de addVisual, y por esto 
-	 * no es necesario que la pachamama conozca su position.
-	 */
+
 	game.addVisualIn(pachamama, game.at(0, 13));
 	
-	/* 
-	 * Agregamos una fila de maices. Ojo al regar, que Toni no va a conocer
-	 * estas plantas.
-	 * 
-	 * En este ejemplo también usamos addVisualIn, por lo tanto
-	 * el Maiz solo define la imagen.
-	 * 
-	 * De yapa, mostramos cómo agregar varios objetos de una utilizando
-	 * un rango (1..13), que equivale a la lista [1, 2, 3, ..., 13].
-	 */
-	(1..13).forEach { x => game.addVisualIn(new Maiz(), game.at(x, 5)) }
+	
+	keyboard.right().onPressDo{toni.derecha()}
+	keyboard.left().onPressDo{toni.izquierda()}
+	keyboard.up().onPressDo{toni.subir()}
+	keyboard.down().onPressDo{toni.bajar()}
+	
+	keyboard.m().onPressDo{		
+		const maiz = new Maiz(position = toni.position() ) 
+	
+		toni.sembrar(maiz)
+		game.addVisual(maiz)
+	}
+	keyboard.t().onPressDo{
+		const trigo = new Trigo(position=toni.position())
+		toni.sembrar(trigo)
+		game.addVisual(trigo)
+	}
+	keyboard.o().onPressDo{
+		const tomaco = new Tomaco(position=toni.position())
+		toni.sembrar(tomaco)
+		game.addVisual(tomaco)
+	}
+	keyboard.a().onPressDo{
+		toni.regarLasPlantas()
+	}
+    keyboard.r().onPressDo{
+     game.colliders(toni).forEach({p=>p.esRegada()})
+     
+    }
+    keyboard.c().onPressDo{
+     game.colliders(toni).forEach({planta=>if (planta.listoParaLaCosecha()){toni.cosechar(planta) game.removeVisual(planta)}})
+    }
+
+	
+	keyboard.x().onPressDo{
+		toni.plantasSembradas().forEach({p=>if (p.listoParaLaCosecha()){game.removeVisual(p)}})
+		toni.cosecharTodo()
 		
+	}
+	keyboard.v().onPressDo{
+		toni.venderCosecha()
+	}
+	keyboard.space().onPressDo{
+		game.say(toni,toni.cantidadDeMonedasYPlantasParaVender())
+	} 
+
 	game.start()
 }
